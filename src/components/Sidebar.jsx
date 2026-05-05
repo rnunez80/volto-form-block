@@ -146,15 +146,18 @@ const Sidebar = ({
                       onChangeField={(name, value) => {
                         let key = name;
                         const update_values = {};
-                        if (subblock.field_type === 'static_text') {
-                          update_values.required = false;
-                        }
+
                         if (
                           name === `required-${subblock.field_id}` ||
                           name === `unique-${subblock.field_id}`
                         ) {
                           key = name.split('-')[0];
                         }
+
+                        if (name === 'field_type' && value === 'static_text') {
+                          update_values.required = false;
+                        }
+
                         onChangeSubBlock(index, {
                           ...subblock,
                           [key]: value,

@@ -125,7 +125,7 @@ class NumberWidget extends Component {
           disabled={this.props.isDisabled}
           icon={icon || null}
           placeholder={placeholder}
-          autoComplete={this.props.autoComplete}
+          autoComplete={this.props.autoComplete || 'off'}
           onChange={({ target }) =>
             onChange(id, target.value === '' ? undefined : target.value)
           }

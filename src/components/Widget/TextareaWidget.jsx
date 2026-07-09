@@ -60,6 +60,7 @@ const TextareaWidget = (props) => {
         value={value || ''}
         disabled={props.isDisabled}
         placeholder={placeholder}
+        autoComplete={props.autoComplete || 'off'}
         onChange={({ target }) =>
           onhandleChange(id, target.value === '' ? undefined : target.value)
         }

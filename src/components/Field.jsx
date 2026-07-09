@@ -87,6 +87,7 @@ const Field = ({
           error={error}
           isDisabled={disabled}
           invalid={isInvalid().toString()}
+          autoComplete={autocomplete}
           {...(isInvalid() ? { className: 'is-invalid' } : {})}
         />
       )}

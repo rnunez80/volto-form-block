@@ -126,6 +126,16 @@ class TextWidget extends Component {
         autoComplete = 'email';
       } else if (lowerId.includes('name') || lowerTitle.includes('name')) {
         autoComplete = 'name';
+      } else if (lowerId.includes('address') || lowerTitle.includes('address')) {
+        autoComplete = 'street-address';
+      } else if (lowerId.includes('city') || lowerTitle.includes('city')) {
+        autoComplete = 'address-level2';
+      } else if (lowerId.includes('state') || lowerTitle.includes('state') || lowerId.includes('province') || lowerTitle.includes('province')) {
+        autoComplete = 'address-level1';
+      } else if (lowerId.includes('zip') || lowerTitle.includes('zip') || lowerId.includes('postal') || lowerTitle.includes('postal')) {
+        autoComplete = 'postal-code';
+      } else if (lowerId.includes('country') || lowerTitle.includes('country')) {
+        autoComplete = 'country';
       }
     }
 

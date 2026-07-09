@@ -55,7 +55,7 @@ const EmailWidget = (props) => {
         value={value || ''}
         disabled={isDisabled}
         placeholder={placeholder}
-        autoComplete="email"
+        autoComplete={props.autoComplete || 'email'}
         onChange={({ target }) =>
           onChange(id, target.value === '' ? undefined : target.value)
         }

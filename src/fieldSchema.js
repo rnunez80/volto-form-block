@@ -76,6 +76,10 @@ const messages = defineMessages({
     id: 'form_field_type_number',
     defaultMessage: 'Number',
   },
+  field_autocomplete: {
+    id: 'form_field_autocomplete',
+    defaultMessage: 'Autocomplete',
+  },
 });
 
 const FieldSchema = (props) => {
@@ -128,7 +132,7 @@ const FieldSchema = (props) => {
           ...schemaExtenderValues.fields,
           ...(props?.field_type === 'static_text'
             ? []
-            : [`required-${props?.field_id}`]),
+            : [`required-${props?.field_id}`, 'autocomplete']),
           ...(enableConditionalFields ? ['visibility_conditions'] : []),
         ],
       },
@@ -152,6 +156,11 @@ const FieldSchema = (props) => {
           ) ?? []),
         ],
         ...attachmentDescription,
+      },
+      autocomplete: {
+        title: intl.formatMessage(messages.field_autocomplete),
+        description: 'Set a value for the autocomplete attribute (e.g., name, email, tel) to help browsers autofill the form.',
+        type: 'string',
       },
       [`required-${props?.field_id}`]: {
         title: intl.formatMessage(messages.field_required),

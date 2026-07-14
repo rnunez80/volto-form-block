@@ -136,6 +136,8 @@ class TextWidget extends Component {
         autoComplete = 'postal-code';
       } else if (lowerId.includes('country') || lowerTitle.includes('country')) {
         autoComplete = 'country';
+      } else if (lowerId.includes('title') || lowerTitle.includes('title')) {
+        autoComplete = 'honorific-prefix';
       } else {
         autoComplete = 'off';
       }

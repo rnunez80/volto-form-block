@@ -5,6 +5,7 @@
 * **modernization:** modernize drag and drop to use `@dnd-kit` (`@dnd-kit/core`, `@dnd-kit/sortable`, `@dnd-kit/utilities`) instead of deprecated `react-dnd` and `react-dnd-html5-backend`
 * **compatibility:** eliminate dependency on `volto-subblocks`, making the form block self-contained and fully compatible with Volto 19 and React 18 functional hooks
 * **refactor:** modernize `Edit.jsx` and `EditBlock.jsx` to functional components using React hooks (`useCallback`, `useMemo`, `useState`, `useEffect`)
+* **ux:** support inline editing of field labels directly on the block canvas with real-time sidebar synchronization and automatic sidebar follow-focus on active fields
 
 ## [3.18.1](https://github.com/collective/volto-form-block/compare/v3.18.0...v3.18.1) (2026-05-27)
 

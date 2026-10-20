@@ -85,7 +85,7 @@ class SelectWidget extends Component {
    */
   static propTypes = {
     id: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
+    title: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
     description: PropTypes.string,
     required: PropTypes.bool,
     error: PropTypes.arrayOf(PropTypes.string),

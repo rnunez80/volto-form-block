@@ -23,6 +23,10 @@ const messages = defineMessages({
     id: 'form_select_a_value',
     defaultMessage: 'Select a value',
   },
+  field_label: {
+    id: 'form_field_label',
+    defaultMessage: 'Field Label',
+  },
 });
 
 /**
@@ -40,12 +44,14 @@ const Field = ({
   input_values,
   value,
   onChange,
+  onLabelChange,
   isOnEdit,
   valid,
   disabled = false,
   formHasErrors = false,
   errorMessage,
   id,
+  onFocus,
 }) => {
   const intl = useIntl();
 
@@ -55,20 +61,57 @@ const Field = ({
 
   const error = errorMessage ? [errorMessage] : [];
 
+  const renderTitle = () => {
+    if (isOnEdit && onLabelChange) {
+      return (
+        <span className="subblock-inline-label-wrapper">
+          <input
+            key={`inline-label-input-${field_id || id || name}`}
+            type="text"
+            className="subblock-inline-label-input"
+            value={label || ''}
+            placeholder={intl.formatMessage(messages.field_label)}
+            title={intl.formatMessage(messages.field_label)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onFocus && onFocus();
+            }}
+            onFocus={(e) => {
+              e.stopPropagation();
+              onFocus && onFocus();
+            }}
+            onChange={(e) => {
+              e.stopPropagation();
+              onLabelChange(e.target.value);
+            }}
+            onKeyDown={(e) => {
+              e.stopPropagation();
+            }}
+          />
+          {required && <span className="subblock-required-star">*</span>}
+        </span>
+      );
+    }
+    return label;
+  };
+
+  const widgetTitle = renderTitle();
+
   return (
     <div className="field">
       {field_type === 'text' && (
         <TextWidget
           id={name}
           name={name}
-          title={label}
+          title={widgetTitle}
           description={description}
           required={required}
           onChange={onChange}
           value={value}
           error={error}
-          isDisabled={disabled}
+          isDisabled={isOnEdit || disabled}
           invalid={isInvalid().toString()}
+          noForInFieldLabel={isOnEdit}
           {...(isInvalid() ? { className: 'is-invalid' } : {})}
         />
       )}
@@ -76,15 +119,16 @@ const Field = ({
         <TextareaWidget
           id={name}
           name={name}
-          title={label}
+          title={widgetTitle}
           description={description}
           required={required}
           onChange={onChange}
           value={value}
           rows={10}
           error={error}
-          isDisabled={disabled}
+          isDisabled={isOnEdit || disabled}
           invalid={isInvalid().toString()}
+          noForInFieldLabel={isOnEdit}
           {...(isInvalid() ? { className: 'is-invalid' } : {})}
         />
       )}
@@ -92,14 +136,15 @@ const Field = ({
         <NumberWidget
           id={name}
           name={name}
-          title={label}
+          title={widgetTitle}
           description={description}
           required={required}
           onChange={onChange}
           value={value}
           error={error}
-          isDisabled={disabled}
+          isDisabled={isOnEdit || disabled}
           invalid={isInvalid().toString()}
+          noForInFieldLabel={isOnEdit}
           {...(isInvalid() ? { className: 'is-invalid' } : {})}
         />
       )}
@@ -107,7 +152,7 @@ const Field = ({
         <SelectWidget
           id={name}
           name={name}
-          title={label}
+          title={widgetTitle}
           description={description}
           getVocabulary={() => {}}
           getVocabularyTokenTitle={() => {}}
@@ -118,16 +163,17 @@ const Field = ({
           aria-label={intl.formatMessage(messages.select_a_value)}
           classNamePrefix="react-select"
           error={error}
-          isDisabled={disabled}
+          isDisabled={isOnEdit || disabled}
           invalid={isInvalid().toString()}
           required={required}
+          noForInFieldLabel={isOnEdit}
           {...(isInvalid() ? { className: 'is-invalid' } : {})}
         />
       )}
       {field_type === 'single_choice' && (
         <RadioWidget
           id={name}
-          title={label}
+          title={widgetTitle}
           description={description}
           required={required}
           onChange={onChange}
@@ -136,8 +182,9 @@ const Field = ({
           ]}
           value={value}
           error={error}
-          isDisabled={disabled}
+          isDisabled={isOnEdit || disabled}
           invalid={isInvalid().toString()}
+          noForInFieldLabel={isOnEdit}
           {...(isInvalid() ? { className: 'is-invalid' } : {})}
         />
       )}
@@ -145,7 +192,7 @@ const Field = ({
         <CheckboxListWidget
           id={name}
           name={name}
-          title={label}
+          title={widgetTitle}
           description={description}
           required={required}
           onChange={onChange}
@@ -154,8 +201,9 @@ const Field = ({
           ]}
           value={value}
           error={error}
-          isDisabled={disabled}
+          isDisabled={isOnEdit || disabled}
           invalid={isInvalid().toString()}
+          noForInFieldLabel={isOnEdit}
           {...(isInvalid() ? { className: 'is-invalid' } : {})}
         />
       )}
@@ -163,14 +211,15 @@ const Field = ({
         <CheckboxWidget
           id={name}
           name={name}
-          title={label}
+          title={widgetTitle}
           description={description}
           required={required}
           onChange={onChange}
           value={!!value}
           error={error}
-          isDisabled={disabled}
+          isDisabled={isOnEdit || disabled}
           invalid={isInvalid().toString()}
+          noForInFieldLabel={isOnEdit}
           {...(isInvalid() ? { className: 'is-invalid' } : {})}
         />
       )}
@@ -178,7 +227,7 @@ const Field = ({
         <DatetimeWidget
           id={name}
           name={name}
-          title={label}
+          title={widgetTitle}
           description={description}
           dateOnly={true}
           noPastDates={false}
@@ -186,9 +235,10 @@ const Field = ({
           onChange={onChange}
           value={value}
           error={error}
-          isDisabled={disabled}
+          isDisabled={isOnEdit || disabled}
           required={required}
           invalid={isInvalid().toString()}
+          noForInFieldLabel={isOnEdit}
           {...(isInvalid() ? { className: 'is-invalid' } : {})}
         />
       )}
@@ -196,30 +246,32 @@ const Field = ({
         <FileWidget
           id={name}
           name={name}
-          title={label}
+          title={widgetTitle}
           description={description}
           type="file"
           required={required}
           invalid={isInvalid().toString()}
           error={error}
-          isDisabled={disabled}
+          isDisabled={isOnEdit || disabled}
           onChange={onChange}
           value={value}
           multiple={false}
+          noForInFieldLabel={isOnEdit}
         />
       )}
       {(field_type === 'from' || field_type === 'email') && (
         <EmailWidget
           id={name}
           name={name}
-          title={label}
+          title={widgetTitle}
           description={description}
           required={required}
           onChange={onChange}
           value={value}
           error={error}
-          isDisabled={disabled}
+          isDisabled={isOnEdit || disabled}
           invalid={isInvalid().toString()}
+          noForInFieldLabel={isOnEdit}
           {...(isInvalid() ? { className: 'is-invalid' } : {})}
         />
       )}

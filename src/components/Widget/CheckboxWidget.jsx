@@ -51,7 +51,13 @@ const CheckboxWidget = (props) => {
             onChange(id, checked);
           }}
           aria-required={required ? 'true' : 'false'}
-          label={<label htmlFor={`field-${id}`}>{title}</label>}
+          label={
+            <label
+              htmlFor={props.noForInFieldLabel ? null : `field-${id}`}
+            >
+              {title}
+            </label>
+          }
           {...attributes}
         />
       </div>
@@ -66,7 +72,7 @@ const CheckboxWidget = (props) => {
  */
 CheckboxWidget.propTypes = {
   id: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
+  title: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   description: PropTypes.string,
   required: PropTypes.bool,
   error: PropTypes.arrayOf(PropTypes.string),

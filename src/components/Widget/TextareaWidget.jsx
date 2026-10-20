@@ -81,7 +81,7 @@ const TextareaWidget = (props) => {
  */
 TextareaWidget.propTypes = {
   id: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
+  title: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   description: PropTypes.string,
   maxLength: PropTypes.number,
   required: PropTypes.bool,

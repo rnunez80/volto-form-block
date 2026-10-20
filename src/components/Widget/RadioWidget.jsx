@@ -44,7 +44,9 @@ const RadioWidget = ({
     >
       <div className="radio-widget">
         <fieldset className="radio-group">
-          <legend aria-hidden="false">{title}</legend>
+          <legend aria-hidden="false">
+            {typeof title === 'string' ? title : ''}
+          </legend>
           {valueList.map((opt) => (
             <div className="radio-button" key={opt.value}>
               <input

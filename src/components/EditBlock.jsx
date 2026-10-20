@@ -84,12 +84,21 @@ export const EditBlock = ({
         <Field
           {...data}
           name={getFieldName(data?.label, fieldId)}
-          key={index}
+          key={fieldId}
           isOnEdit={true}
           id={fieldId}
           field_id={fieldId}
           index={index}
           value={data?.field_type === 'static_text' ? data?.value : null}
+          onLabelChange={(newLabel) => {
+            onChange &&
+              onChange(index, {
+                ...data,
+                label: newLabel,
+                field_name: getFieldName(newLabel, fieldId),
+              });
+          }}
+          onFocus={onSelect}
           onChange={
             data?.field_type === 'static_text'
               ? (_id, value) => onChange && onChange(index, { ...data, value })

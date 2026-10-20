@@ -27,7 +27,7 @@ class TextWidget extends Component {
    */
   static propTypes = {
     id: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
+    title: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
     description: PropTypes.string,
     required: PropTypes.bool,
     error: PropTypes.arrayOf(PropTypes.string),
@@ -119,7 +119,10 @@ class TextWidget extends Component {
     let autoComplete = this.props.autoComplete;
     if (!autoComplete) {
       const lowerId = id.toLowerCase();
-      const lowerTitle = this.props.title?.toLowerCase() || '';
+      const lowerTitle =
+        typeof this.props.title === 'string'
+          ? this.props.title.toLowerCase()
+          : '';
       if (lowerId.includes('phone') || lowerId.includes('tel') || lowerTitle.includes('phone') || lowerTitle.includes('tel')) {
         autoComplete = 'tel';
       } else if (lowerId.includes('email') || lowerTitle.includes('email')) {

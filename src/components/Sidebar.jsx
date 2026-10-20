@@ -38,6 +38,10 @@ const messages = defineMessages({
     id: 'remove_data_button',
     defaultMessage: 'remove expired data',
   },
+  field: {
+    id: 'form_field',
+    defaultMessage: 'Field',
+  },
 });
 
 const Sidebar = ({
@@ -51,6 +55,7 @@ const Sidebar = ({
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
+  const subblockRefs = React.useRef([]);
 
   if (data.send_email === undefined) data.send_email = true;
 
@@ -60,6 +65,23 @@ const Sidebar = ({
     });
   var FormSchema = config.blocks.blocksConfig.form.formSchema;
   var FieldSchema = config.blocks.blocksConfig.form.fieldSchema;
+
+  // Scroll active subblock into view when focus/selection changes
+  useEffect(() => {
+    if (
+      selected !== null &&
+      selected !== undefined &&
+      subblockRefs.current[selected]
+    ) {
+      const el = subblockRefs.current[selected];
+      if (el && typeof el.scrollIntoView === 'function') {
+        el.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+        });
+      }
+    }
+  }, [selected]);
 
   // update list of fields ID
   useEffect(() => {
@@ -108,7 +130,15 @@ const Sidebar = ({
                 [`unique-${subblock.field_id}`]: subblock.unique,
               };
               return (
-                <div key={'subblock' + subblock.id}>
+                <div
+                  key={'subblock' + subblock.id}
+                  ref={(el) => {
+                    subblockRefs.current[index] = el;
+                  }}
+                  className={`subblock-accordion-item ${
+                    selected === index ? 'active-subblock' : ''
+                  }`}
+                >
                   <Accordion.Title
                     active={selected === index}
                     index={index}
@@ -116,7 +146,9 @@ const Sidebar = ({
                       setSelected(selected === index ? null : index)
                     }
                   >
-                    {subblock.label ?? subblock.field_name}
+                    {subblock.label ||
+                      subblock.field_name ||
+                      `${intl.formatMessage(messages.field)} ${index + 1}`}
                     {selected === index ? (
                       <Icon name={upSVG} size="20px" />
                     ) : (
@@ -156,6 +188,13 @@ const Sidebar = ({
 
                         if (name === 'field_type' && value === 'static_text') {
                           update_values.required = false;
+                        }
+
+                        if (key === 'label') {
+                          update_values.field_name = getFieldName(
+                            value,
+                            subblock.field_id,
+                          );
                         }
 
                         onChangeSubBlock(index, {

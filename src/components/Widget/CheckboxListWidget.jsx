@@ -62,7 +62,9 @@ const CheckboxListWidget = ({
     >
       <div className="checkbox-list-widget">
         <fieldset className="checkbox-group">
-          <legend aria-hidden="false">{title}</legend>
+          <legend aria-hidden="false">
+            {typeof title === 'string' ? title : ''}
+          </legend>
           {valueList?.map((opt) => (
             <div className="checkbox-item" key={opt.value}>
               <Checkbox
@@ -95,7 +97,7 @@ const CheckboxListWidget = ({
  */
 CheckboxListWidget.propTypes = {
   id: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
+  title: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   description: PropTypes.string,
   required: PropTypes.bool,
   error: PropTypes.arrayOf(PropTypes.string),

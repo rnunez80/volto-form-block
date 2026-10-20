@@ -17,3 +17,21 @@
     background-color: #e40166;
     content: '';
 }
+
+.ui.accordion.form .subblock-accordion-item {
+    border-left: 3px solid transparent;
+    transition: all 0.25s ease-in-out;
+}
+
+.ui.accordion.form .subblock-accordion-item.active-subblock {
+    border-left-color: #007eb1;
+    background-color: #f7fbfd;
+}
+
+.ui.accordion.form .subblock-accordion-item .title {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: 600 !important;
+}
+

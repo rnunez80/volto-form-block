@@ -1,4 +1,4 @@
-## [3.19.0](https://github.com/collective/volto-form-block/compare/v3.18.1...v3.19.0) (2026-10-20)
+## [3.20.0](https://github.com/collective/volto-form-block/compare/v3.18.1...v3.20.0) (2026-10-20)
 
 ### Features
 
@@ -7,6 +7,8 @@
 * **refactor:** modernize `Edit.jsx` and `EditBlock.jsx` to functional components using React hooks (`useCallback`, `useMemo`, `useState`, `useEffect`)
 * **ux:** support inline editing of field labels directly on the block canvas with real-time sidebar synchronization and automatic sidebar follow-focus on active fields
 * **schema:** refactor block sidebar schema and edit view so child settings are logically grouped beneath boolean toggle switches (`send` / `store`) with conditional visibility and dynamic required validation
+* **destinations:** support `stream_data` toggle from data export pipeline to satisfy the form destination requirement
+* **cleanup:** remove description on "Send email to recipient" toggle for a cleaner sidebar appearance
 
 ### Bug Fixes
 

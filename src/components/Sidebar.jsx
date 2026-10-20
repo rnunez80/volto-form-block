@@ -57,8 +57,6 @@ const Sidebar = ({
   const dispatch = useDispatch();
   const subblockRefs = React.useRef([]);
 
-  if (data.send_email === undefined) data.send_email = true;
-
   data.subblocks &&
     data.subblocks.forEach((subblock) => {
       subblock.field_id = subblock.id;
@@ -120,6 +118,22 @@ const Sidebar = ({
                 });
                 return;
               }
+              if (id === 'send') {
+                onChangeBlock(block, {
+                  ...data,
+                  send: value,
+                  sendEmail: value,
+                });
+                return;
+              }
+              if (id === 'store') {
+                onChangeBlock(block, {
+                  ...data,
+                  store: value,
+                  storeData: value,
+                });
+                return;
+              }
               onChangeBlock(block, {
                 ...data,
                 [id]: value,
@@ -127,6 +141,8 @@ const Sidebar = ({
             }}
             formData={{
               ...data,
+              send: data.send ?? data.sendEmail,
+              store: data.store ?? data.storeData,
               form_title: data.form_title ?? data.title,
               form_description: data.form_description ?? data.description,
             }}

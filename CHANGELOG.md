@@ -6,6 +6,7 @@
 * **compatibility:** eliminate dependency on `volto-subblocks`, making the form block self-contained and fully compatible with Volto 19 and React 18 functional hooks
 * **refactor:** modernize `Edit.jsx` and `EditBlock.jsx` to functional components using React hooks (`useCallback`, `useMemo`, `useState`, `useEffect`)
 * **ux:** support inline editing of field labels directly on the block canvas with real-time sidebar synchronization and automatic sidebar follow-focus on active fields
+* **schema:** refactor block sidebar schema and edit view so child settings are logically grouped beneath boolean toggle switches (`send` / `store`) with conditional visibility and dynamic required validation
 
 ### Bug Fixes
 

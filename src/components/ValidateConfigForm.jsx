@@ -18,19 +18,28 @@ const messages = defineMessages({
 const ValidateConfig = (data, blockSchema, intl) => {
   var SchemaValidators = config.blocks.blocksConfig.form.schemaValidators;
 
-  const required_fields = blockSchema.required;
+  const activeFields = new Set(
+    (blockSchema.fieldsets || []).flatMap((fs) => fs.fields || []),
+  );
+
+  const required_fields = (blockSchema.required || []).filter((r) =>
+    activeFields.has(r),
+  );
   const noRequired =
     required_fields.filter(
       (r) =>
         data[r] === null ||
         data[r] === undefined ||
         data[r] === '' ||
-        (blockSchema.properties[r].type === 'boolean' && !data[r]),
+        (blockSchema.properties?.[r]?.type === 'boolean' && !data[r]),
     ).length === 0;
 
   let schema_validation = [];
   if (SchemaValidators) {
     Object.keys(SchemaValidators).forEach((fieldName) => {
+      if (!activeFields.has(fieldName)) {
+        return;
+      }
       const validateFieldFN = SchemaValidators[fieldName];
       const validation = validateFieldFN(data, intl);
 

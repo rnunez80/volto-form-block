@@ -67,9 +67,13 @@ const applyConfig = (config) => {
       schemaValidators: {
         /*fieldname: validationFN(data)*/
         default_from: (data, intl) => {
+          const isEmailEnabled = Boolean(data?.send ?? data?.sendEmail);
+          if (!isEmailEnabled) return null;
           return validateDefaultFrom(data.default_from, intl);
         },
         default_to: (data, intl) => {
+          const isEmailEnabled = Boolean(data?.send ?? data?.sendEmail);
+          if (!isEmailEnabled) return null;
           return validateDefaultTo(data.default_to, intl);
         },
       },

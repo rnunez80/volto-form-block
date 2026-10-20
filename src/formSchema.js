@@ -103,14 +103,24 @@ const messages = defineMessages({
   },
 });
 
-const Schema = (data) => {
-  var intl = useIntl();
+const Schema = (data = {}) => {
+  const intl = useIntl();
+
+  const isEmailEnabled = Boolean(data?.send ?? data?.sendEmail);
+  const isStoreEnabled = Boolean(data?.store ?? data?.storeData);
 
   let conditional_required = [];
-  if (!data.store && !data.send) {
+  if (!isStoreEnabled && !isEmailEnabled) {
     conditional_required.push('store');
     conditional_required.push('send');
   }
+
+  const requiredFields = [
+    ...(isEmailEnabled
+      ? ['default_to', 'default_from', 'default_subject']
+      : []),
+    ...conditional_required,
+  ];
 
   return {
     title: intl.formatMessage(messages.form),
@@ -121,22 +131,31 @@ const Schema = (data) => {
         fields: [
           'form_title',
           'form_description',
-          'default_to',
-          'default_from',
-          'default_subject',
           'submit_label',
           'show_cancel',
           ...(data?.show_cancel ? ['cancel_label'] : []),
-          'mail_header',
-          'mail_footer',
           'captcha',
-          'email_otp_verification',
+          'send_message',
         ],
       },
       {
         id: 'manage_data',
         title: intl.formatMessage(messages.manage_data),
-        fields: ['store', 'remove_data_after_days', 'send', 'send_message'],
+        fields: [
+          'send',
+          ...(isEmailEnabled
+            ? [
+                'default_to',
+                'default_from',
+                'default_subject',
+                'mail_header',
+                'mail_footer',
+                'email_otp_verification',
+              ]
+            : []),
+          'store',
+          ...(isStoreEnabled ? ['remove_data_after_days'] : []),
+        ],
       },
     ],
     properties: {
@@ -224,12 +243,7 @@ const Schema = (data) => {
         description: intl.formatMessage(messages.send_message_helptext),
       },
     },
-    required: [
-      'default_to',
-      'default_from',
-      'default_subject',
-      ...conditional_required,
-    ],
+    required: requiredFields,
   };
 };
 export default Schema;

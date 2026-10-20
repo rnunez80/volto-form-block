@@ -52,6 +52,7 @@ const Field = ({
   formHasErrors = false,
   errorMessage,
   id,
+  fieldSet = 'form',
   onFocus,
 }) => {
   const intl = useIntl();
@@ -62,6 +63,7 @@ const Field = ({
 
   const error = errorMessage ? [errorMessage] : [];
   const fieldDescription = field_description || description;
+  const effectiveFieldSet = fieldSet || 'form';
 
   const renderTitle = () => {
     if (isOnEdit && onLabelChange) {
@@ -114,6 +116,7 @@ const Field = ({
           isDisabled={isOnEdit || disabled}
           invalid={isInvalid().toString()}
           noForInFieldLabel={isOnEdit}
+          fieldSet={effectiveFieldSet}
           {...(isInvalid() ? { className: 'is-invalid' } : {})}
         />
       )}
@@ -131,6 +134,7 @@ const Field = ({
           isDisabled={isOnEdit || disabled}
           invalid={isInvalid().toString()}
           noForInFieldLabel={isOnEdit}
+          fieldSet={effectiveFieldSet}
           {...(isInvalid() ? { className: 'is-invalid' } : {})}
         />
       )}
@@ -147,6 +151,7 @@ const Field = ({
           isDisabled={isOnEdit || disabled}
           invalid={isInvalid().toString()}
           noForInFieldLabel={isOnEdit}
+          fieldSet={effectiveFieldSet}
           {...(isInvalid() ? { className: 'is-invalid' } : {})}
         />
       )}
@@ -170,6 +175,7 @@ const Field = ({
           invalid={isInvalid().toString()}
           required={required}
           noForInFieldLabel={isOnEdit}
+          fieldSet={effectiveFieldSet}
           {...(isInvalid() ? { className: 'is-invalid' } : {})}
         />
       )}
@@ -189,6 +195,7 @@ const Field = ({
           isDisabled={isOnEdit || disabled}
           invalid={isInvalid().toString()}
           noForInFieldLabel={isOnEdit}
+          fieldSet={effectiveFieldSet}
           {...(isInvalid() ? { className: 'is-invalid' } : {})}
         />
       )}
@@ -209,6 +216,7 @@ const Field = ({
           isDisabled={isOnEdit || disabled}
           invalid={isInvalid().toString()}
           noForInFieldLabel={isOnEdit}
+          fieldSet={effectiveFieldSet}
           {...(isInvalid() ? { className: 'is-invalid' } : {})}
         />
       )}
@@ -226,6 +234,7 @@ const Field = ({
           isDisabled={isOnEdit || disabled}
           invalid={isInvalid().toString()}
           noForInFieldLabel={isOnEdit}
+          fieldSet={effectiveFieldSet}
           {...(isInvalid() ? { className: 'is-invalid' } : {})}
         />
       )}
@@ -245,6 +254,7 @@ const Field = ({
           required={required}
           invalid={isInvalid().toString()}
           noForInFieldLabel={isOnEdit}
+          fieldSet={effectiveFieldSet}
           {...(isInvalid() ? { className: 'is-invalid' } : {})}
         />
       )}
@@ -263,6 +273,7 @@ const Field = ({
           value={value}
           multiple={false}
           noForInFieldLabel={isOnEdit}
+          fieldSet={effectiveFieldSet}
         />
       )}
       {(field_type === 'from' || field_type === 'email') && (
@@ -270,7 +281,7 @@ const Field = ({
           id={name}
           name={name}
           title={widgetTitle}
-          description={description}
+          description={fieldDescription}
           required={required}
           onChange={onChange}
           value={value}
@@ -278,6 +289,7 @@ const Field = ({
           isDisabled={isOnEdit || disabled}
           invalid={isInvalid().toString()}
           noForInFieldLabel={isOnEdit}
+          fieldSet={effectiveFieldSet}
           {...(isInvalid() ? { className: 'is-invalid' } : {})}
         />
       )}

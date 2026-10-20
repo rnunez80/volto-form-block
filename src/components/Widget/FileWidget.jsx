@@ -181,11 +181,11 @@ const FileWidget = (props) => {
               </div>
             )}
 
-            <label className="label-file-widget-input">
+            <span className="label-file-widget-input">
               {value
                 ? intl.formatMessage(messages.replaceFile)
                 : intl.formatMessage(messages.addNewFile)}
-            </label>
+            </span>
             <input
               {...getInputProps({
                 type: 'file',

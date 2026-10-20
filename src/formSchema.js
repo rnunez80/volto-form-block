@@ -119,8 +119,8 @@ const Schema = (data) => {
         id: 'default',
         title: 'Default',
         fields: [
-          'title',
-          'description',
+          'form_title',
+          'form_description',
           'default_to',
           'default_from',
           'default_subject',
@@ -140,10 +140,10 @@ const Schema = (data) => {
       },
     ],
     properties: {
-      title: {
+      form_title: {
         title: intl.formatMessage(messages.title),
       },
-      description: {
+      form_description: {
         title: intl.formatMessage(messages.description),
         type: 'textarea',
       },
@@ -172,6 +172,7 @@ const Schema = (data) => {
         title: intl.formatMessage(messages.mail_header_label),
         widget: 'richtext',
         type: 'string',
+        noForInFieldLabel: true,
         description: intl.formatMessage(
           messages.mail_header_footer_description,
         ),
@@ -180,6 +181,7 @@ const Schema = (data) => {
         title: intl.formatMessage(messages.mail_footer_label),
         widget: 'richtext',
         type: 'string',
+        noForInFieldLabel: true,
         description: intl.formatMessage(
           messages.mail_header_footer_description,
         ),

@@ -208,11 +208,13 @@ const VisibilityConditionsWidget = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showModalChoices]);
 
+  const inputId = props.id ? `field-${props.id}` : 'form_visibility_conditions';
+
   return (
     <Grid.Row className="visibility-conditions-widget">
       <div className="ui message wrapper-widget">
         <div className="wrapper-widget-label">
-          <label htmlFor="form_visibility_conditions">
+          <label htmlFor={inputId}>
             {intl.formatMessage(messages.visible_conditions_widget_title)}:
           </label>
           <Modal
@@ -469,8 +471,8 @@ const VisibilityConditionsWidget = (props) => {
         </div>
         {/* TEXTAREA WIDGET */}
         <TextArea
-          id="form_visibility_conditions"
-          name="form_visibility_conditions"
+          id={inputId}
+          name={inputId}
           value={createStringFormula(value)}
           readOnly
           disabled

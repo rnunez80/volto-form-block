@@ -84,9 +84,13 @@ const FormView = ({
     <div className="block form">
       <div className="public-ui">
         <Segment style={{ margin: '2rem 0' }} padded>
-          {data.title && <h2>{data.title}</h2>}
-          {data.description && (
-            <p className="description">{data.description}</p>
+          {(data.form_title || data.title) && (
+            <h2>{data.form_title || data.title}</h2>
+          )}
+          {(data.form_description || data.description) && (
+            <p className="description">
+              {data.form_description || data.description}
+            </p>
           )}
 
           {formState.result ? (

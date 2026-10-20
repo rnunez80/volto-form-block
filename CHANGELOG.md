@@ -7,6 +7,17 @@
 * **refactor:** modernize `Edit.jsx` and `EditBlock.jsx` to functional components using React hooks (`useCallback`, `useMemo`, `useState`, `useEffect`)
 * **ux:** support inline editing of field labels directly on the block canvas with real-time sidebar synchronization and automatic sidebar follow-focus on active fields
 
+### Bug Fixes
+
+* **a11y:** fix duplicate IDs across subblocks in sidebar by rendering form controls only for the actively selected subblock
+* **a11y:** rename form title/description and subblock description fields to `form_title`, `form_description`, and `field_description` to eliminate duplicate IDs with content items
+* **a11y:** fix unique label associations for SelectWidget by passing `inputId` and `instanceId` to react-select to bind `<label for>` directly to the input element
+* **a11y:** fix orphaned label in FileWidget dropzone by replacing unassociated `<label>` with `<span>`
+* **a11y:** scope IDs and label associations in VisibilityConditionsWidget
+* **a11y:** add `noForInFieldLabel` to rich text mail header/footer schemas to prevent broken label `for` targets
+* **a11y:** ensure RadioWidget and CheckboxListWidget fieldset legends render accessible text when title is a react element
+* **a11y:** improve text contrast for inline label placeholders, drag handles, and file dropzone hints to meet WCAG AA (>= 4.5:1)
+
 ## [3.18.1](https://github.com/collective/volto-form-block/compare/v3.18.0...v3.18.1) (2026-05-27)
 
 ### Features

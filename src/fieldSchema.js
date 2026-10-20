@@ -123,7 +123,7 @@ const FieldSchema = (props) => {
         title: 'Default',
         fields: [
           'label',
-          'description',
+          'field_description',
           'field_type',
           ...schemaExtenderValues.fields,
           ...(props?.field_type === 'static_text'
@@ -139,7 +139,7 @@ const FieldSchema = (props) => {
         title: intl.formatMessage(messages.field_label),
         send_to_backend: true,
       },
-      description: {
+      field_description: {
         title: intl.formatMessage(messages.field_description),
       },
       field_type: {

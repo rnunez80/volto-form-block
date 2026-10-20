@@ -49,7 +49,7 @@
 
 .subblock-inline-label-input:hover {
     background: rgba(0, 126, 177, 0.05) !important;
-    border-color: #b8c6c8 !important;
+    border-color: #007eb1 !important;
 }
 
 .subblock-inline-label-input:focus {
@@ -60,7 +60,7 @@
 }
 
 .subblock-inline-label-input::placeholder {
-    color: #8c9ba5 !important;
+    color: #595959 !important;
     font-style: italic !important;
     font-weight: 400 !important;
 }

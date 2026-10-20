@@ -14,4 +14,9 @@
 
 .block.form .label-file-widget-input {
     color: #00537a;
+    cursor: pointer;
+}
+
+.block.form .dropzone-text {
+    color: #24292e;
 }

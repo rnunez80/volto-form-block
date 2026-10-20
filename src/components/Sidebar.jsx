@@ -104,12 +104,32 @@ const Sidebar = ({
           <BlockDataForm
             schema={FormSchema(data)}
             onChangeField={(id, value) => {
+              if (id === 'form_title') {
+                onChangeBlock(block, {
+                  ...data,
+                  title: value,
+                  form_title: value,
+                });
+                return;
+              }
+              if (id === 'form_description') {
+                onChangeBlock(block, {
+                  ...data,
+                  description: value,
+                  form_description: value,
+                });
+                return;
+              }
               onChangeBlock(block, {
                 ...data,
                 [id]: value,
               });
             }}
-            formData={data}
+            formData={{
+              ...data,
+              form_title: data.form_title ?? data.title,
+              form_description: data.form_description ?? data.description,
+            }}
             onChangeBlock={() => {}}
             block={block}
           />
@@ -126,6 +146,8 @@ const Sidebar = ({
             data.subblocks.map((subblock, index) => {
               const subblockData = {
                 ...subblock,
+                field_description:
+                  subblock.field_description ?? subblock.description,
                 [`required-${subblock.field_id}`]: subblock.required,
                 [`unique-${subblock.field_id}`]: subblock.unique,
               };
@@ -156,57 +178,70 @@ const Sidebar = ({
                     )}
                   </Accordion.Title>
                   <Accordion.Content active={selected === index}>
-                    {/* Field ID info */}
-                    {(subblock.field_type === 'text' ||
-                      subblock.field_type === 'from' ||
-                      subblock.field_type === 'textarea' ||
-                      subblock.field_type === 'date' ||
-                      subblock.field_type === 'single_choice' ||
-                      subblock.field_type === 'multiple_choice' ||
-                      subblock.field_type === 'select' ||
-                      subblock.field_type === 'checkbox' ||
-                      subblock.field_type === 'attachment') && (
-                      <Segment tertiary>
-                        {intl.formatMessage(messages.fieldId)}:{' '}
-                        <strong>
-                          {getFieldName(subblock.label, subblock.field_id)}
-                        </strong>
-                      </Segment>
+                    {selected === index && (
+                      <>
+                        {/* Field ID info */}
+                        {(subblock.field_type === 'text' ||
+                          subblock.field_type === 'from' ||
+                          subblock.field_type === 'textarea' ||
+                          subblock.field_type === 'date' ||
+                          subblock.field_type === 'single_choice' ||
+                          subblock.field_type === 'multiple_choice' ||
+                          subblock.field_type === 'select' ||
+                          subblock.field_type === 'checkbox' ||
+                          subblock.field_type === 'attachment') && (
+                          <Segment tertiary>
+                            {intl.formatMessage(messages.fieldId)}:{' '}
+                            <strong>
+                              {getFieldName(subblock.label, subblock.field_id)}
+                            </strong>
+                          </Segment>
+                        )}
+                        <BlockDataForm
+                          schema={FieldSchema(subblock)}
+                          onChangeField={(name, value) => {
+                            let key = name;
+                            const update_values = {};
+
+                            if (
+                              name === `required-${subblock.field_id}` ||
+                              name === `unique-${subblock.field_id}`
+                            ) {
+                              key = name.split('-')[0];
+                            }
+
+                            if (
+                              name === 'field_type' &&
+                              value === 'static_text'
+                            ) {
+                              update_values.required = false;
+                            }
+
+                            if (key === 'label') {
+                              update_values.field_name = getFieldName(
+                                value,
+                                subblock.field_id,
+                              );
+                            }
+
+                            if (key === 'field_description') {
+                              key = 'description';
+                              update_values.description = value;
+                              update_values.field_description = value;
+                            }
+
+                            onChangeSubBlock(index, {
+                              ...subblock,
+                              [key]: value,
+                              ...update_values,
+                            });
+                          }}
+                          formData={subblockData}
+                          onChangeBlock={() => {}}
+                          block={block}
+                        />
+                      </>
                     )}
-                    <BlockDataForm
-                      schema={FieldSchema(subblock)}
-                      onChangeField={(name, value) => {
-                        let key = name;
-                        const update_values = {};
-
-                        if (
-                          name === `required-${subblock.field_id}` ||
-                          name === `unique-${subblock.field_id}`
-                        ) {
-                          key = name.split('-')[0];
-                        }
-
-                        if (name === 'field_type' && value === 'static_text') {
-                          update_values.required = false;
-                        }
-
-                        if (key === 'label') {
-                          update_values.field_name = getFieldName(
-                            value,
-                            subblock.field_id,
-                          );
-                        }
-
-                        onChangeSubBlock(index, {
-                          ...subblock,
-                          [key]: value,
-                          ...update_values,
-                        });
-                      }}
-                      formData={subblockData}
-                      onChangeBlock={() => {}}
-                      block={block}
-                    />
                   </Accordion.Content>
                 </div>
               );

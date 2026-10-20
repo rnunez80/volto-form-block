@@ -215,7 +215,8 @@ class SelectWidget extends Component {
     return (
       <FormFieldWrapper {...this.props}>
         <Select
-          id={`field-${id}`}
+          inputId={`field-${id}`}
+          instanceId={`field-${id}`}
           key={choices}
           name={id}
           isDisabled={disabled}
@@ -255,7 +256,9 @@ class SelectWidget extends Component {
             );
           }}
           isClearable
-          aria-label={title}
+          aria-label={
+            typeof title === 'string' ? title : this.props.label || id
+          }
           ariaLiveMessages={getReactSelectAriaLiveMessages(intl)}
           screenReaderStatus={getReactSelectScreenReaderStatus(intl)}
         />

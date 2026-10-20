@@ -37,6 +37,7 @@ const messages = defineMessages({
 const Field = ({
   label,
   description,
+  field_description,
   name,
   required,
   field_type,
@@ -60,6 +61,7 @@ const Field = ({
   };
 
   const error = errorMessage ? [errorMessage] : [];
+  const fieldDescription = field_description || description;
 
   const renderTitle = () => {
     if (isOnEdit && onLabelChange) {
@@ -104,7 +106,7 @@ const Field = ({
           id={name}
           name={name}
           title={widgetTitle}
-          description={description}
+          description={fieldDescription}
           required={required}
           onChange={onChange}
           value={value}
@@ -120,7 +122,7 @@ const Field = ({
           id={name}
           name={name}
           title={widgetTitle}
-          description={description}
+          description={fieldDescription}
           required={required}
           onChange={onChange}
           value={value}
@@ -137,7 +139,7 @@ const Field = ({
           id={name}
           name={name}
           title={widgetTitle}
-          description={description}
+          description={fieldDescription}
           required={required}
           onChange={onChange}
           value={value}
@@ -153,14 +155,15 @@ const Field = ({
           id={name}
           name={name}
           title={widgetTitle}
-          description={description}
+          label={label}
+          description={fieldDescription}
           getVocabulary={() => {}}
           getVocabularyTokenTitle={() => {}}
           choices={[...(input_values?.map((v) => [v, v]) ?? [])]}
           value={value}
           onChange={onChange}
           placeholder={intl.formatMessage(messages.select_a_value)}
-          aria-label={intl.formatMessage(messages.select_a_value)}
+          aria-label={label || intl.formatMessage(messages.select_a_value)}
           classNamePrefix="react-select"
           error={error}
           isDisabled={isOnEdit || disabled}
@@ -174,7 +177,8 @@ const Field = ({
         <RadioWidget
           id={name}
           title={widgetTitle}
-          description={description}
+          label={label}
+          description={fieldDescription}
           required={required}
           onChange={onChange}
           valueList={[
@@ -193,7 +197,8 @@ const Field = ({
           id={name}
           name={name}
           title={widgetTitle}
-          description={description}
+          label={label}
+          description={fieldDescription}
           required={required}
           onChange={onChange}
           valueList={[
@@ -212,7 +217,8 @@ const Field = ({
           id={name}
           name={name}
           title={widgetTitle}
-          description={description}
+          label={label}
+          description={fieldDescription}
           required={required}
           onChange={onChange}
           value={!!value}
@@ -228,7 +234,7 @@ const Field = ({
           id={name}
           name={name}
           title={widgetTitle}
-          description={description}
+          description={fieldDescription}
           dateOnly={true}
           noPastDates={false}
           resettable={false}
@@ -247,7 +253,7 @@ const Field = ({
           id={name}
           name={name}
           title={widgetTitle}
-          description={description}
+          description={fieldDescription}
           type="file"
           required={required}
           invalid={isInvalid().toString()}

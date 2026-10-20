@@ -19,6 +19,7 @@ import 'volto-form-block/components/Widget/CheckboxListWidget.css';
 const CheckboxListWidget = ({
   id,
   title,
+  label,
   required,
   description,
   error,
@@ -63,7 +64,7 @@ const CheckboxListWidget = ({
       <div className="checkbox-list-widget">
         <fieldset className="checkbox-group">
           <legend aria-hidden="false">
-            {typeof title === 'string' ? title : ''}
+            {(typeof title === 'string' ? title : label) || ''}
           </legend>
           {valueList?.map((opt) => (
             <div className="checkbox-item" key={opt.value}>

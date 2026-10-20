@@ -7,6 +7,7 @@ import 'volto-form-block/components/Widget/RadioWidget.css';
 const RadioWidget = ({
   id,
   title,
+  label,
   required,
   description,
   error,
@@ -45,7 +46,7 @@ const RadioWidget = ({
       <div className="radio-widget">
         <fieldset className="radio-group">
           <legend aria-hidden="false">
-            {typeof title === 'string' ? title : ''}
+            {(typeof title === 'string' ? title : label) || ''}
           </legend>
           {valueList.map((opt) => (
             <div className="radio-button" key={opt.value}>

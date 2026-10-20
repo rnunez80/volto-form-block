@@ -1,0 +1,58 @@
+.volto-subblocks-wrapper .button.add-element {
+  padding: 0.5rem 1rem !important;
+  background-color: #007eb1;
+  color: #fff;
+  font-size: 1rem !important;
+}
+
+.volto-subblocks-wrapper .button.add-element:hover {
+  background-color: #045475;
+}
+
+.volto-subblocks-wrapper .isDragging {
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 5px;
+}
+
+.volto-subblocks-wrapper .dragsubblock:hover {
+  color: #007eb1;
+}
+
+.volto-subblocks-wrapper .single-block {
+  position: relative;
+}
+
+.volto-subblocks-wrapper .single-block .dragsubblock {
+  position: absolute;
+  top: -25px;
+  left: 0;
+  color: #b8c6c8;
+}
+
+.volto-subblocks-wrapper .single-block .dragsubblock:hover,
+.volto-subblocks-wrapper .single-block .dragsubblock:active {
+  cursor: grab;
+}
+
+.volto-subblocks-wrapper .single-block.subblock-draggable {
+  transform: translateZ(0);
+}
+
+.volto-subblocks-wrapper .single-block.subblock-draggable .ui.basic.button.delete-button {
+  left: 24px;
+}
+
+.volto-subblocks-wrapper .single-block .ui.basic.button.delete-button {
+  position: absolute;
+  top: -18px;
+  left: 0;
+}
+
+.volto-subblocks-wrapper .single-block .ui.basic.button.delete-button svg {
+  fill: #000 !important;
+}
+
+.volto-subblocks-wrapper .single-block .ui.basic.button.delete-button:hover svg,
+.volto-subblocks-wrapper .single-block .ui.basic.button.delete-button:active svg {
+  fill: #e40166 !important;
+}

@@ -105,12 +105,6 @@ const applyConfig = (config) => {
   config.settings.loadables['ReactTable'] = loadable.lib(
     () => import('@tanstack/react-table'),
   );
-  config.settings.loadables['reactDnd'] = loadable.lib(
-    () => import('react-dnd'),
-  );
-  config.settings.loadables['reactDndHtml5Backend'] = loadable.lib(
-    () => import('react-dnd-html5-backend'),
-  );
   return config;
 };
 

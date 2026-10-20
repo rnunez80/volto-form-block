@@ -1,3 +1,11 @@
+## [3.19.0](https://github.com/collective/volto-form-block/compare/v3.18.1...v3.19.0) (2026-10-20)
+
+### Features
+
+* **modernization:** modernize drag and drop to use `@dnd-kit` (`@dnd-kit/core`, `@dnd-kit/sortable`, `@dnd-kit/utilities`) instead of deprecated `react-dnd` and `react-dnd-html5-backend`
+* **compatibility:** eliminate dependency on `volto-subblocks`, making the form block self-contained and fully compatible with Volto 19 and React 18 functional hooks
+* **refactor:** modernize `Edit.jsx` and `EditBlock.jsx` to functional components using React hooks (`useCallback`, `useMemo`, `useState`, `useEffect`)
+
 ## [3.18.1](https://github.com/collective/volto-form-block/compare/v3.18.0...v3.18.1) (2026-05-27)
 
 ### Features

@@ -1,75 +1,104 @@
 /**
  * Edit text block.
- * @module components/manage/Blocks/Title/Edit
+ * Modernized using @dnd-kit/sortable instead of legacy react-dnd/volto-subblocks.
+ * @module components/manage/Blocks/Form/EditBlock
  */
 
 import React from 'react';
-import { compose } from 'redux';
-
-import { injectDNDSubblocks, SubblockEdit, Subblock } from 'volto-subblocks';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { Button } from 'semantic-ui-react';
+import Icon from '@plone/volto/components/theme/Icon/Icon';
+import dragSVG from '@plone/volto/icons/drag.svg';
+import trashSVG from '@plone/volto/icons/delete.svg';
+import cx from 'classnames';
 
 import Field from 'volto-form-block/components/Field';
 import { getFieldName } from 'volto-form-block/components/utils';
 
-/**
- * Edit text block class.
- * @class Edit
- * @extends Component
- */
-class EditBlock extends SubblockEdit {
-  /**
-   * Constructor
-   * @method constructor
-   * @param {Object} props Component properties
-   * @constructs WysiwygEditor
-   */
-  constructor(props) {
-    super(props);
-    //default subblock values
-    if (!props.data.field_type) {
-      this.onChange({
-        field_type: 'text',
-      });
-    }
-  }
+export const EditBlock = ({
+  id,
+  index,
+  data = {},
+  selected,
+  onSelect,
+  onChange,
+  onDelete,
+}) => {
+  const sortableId = String(data?.id || id || index);
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: sortableId });
 
-  /**
-   * Render method.
-   * @method render
-   * @returns {string} Markup for the component.
-   */
-  render() {
-    if (__SERVER__) {
-      return <div />;
-    }
-    const id = this.props.data?.id || new Date().getTime();
+  const style = {
+    transform: CSS.Translate.toString(transform),
+    transition,
+    opacity: isDragging ? 0.4 : 1,
+    position: 'relative',
+  };
 
-    return (
-      <Subblock subblock={this} className="subblock-edit">
-        <div key={this.props.data.index}>
-          <Field
-            {...this.props.data}
-            name={getFieldName(this.props.data.label, id)}
-            key={this.props.data.index}
-            isOnEdit={true}
-            id={id}
-            field_id={id}
-            index={this.props.data.index}
-            value={
-              this.props.data.field_type === 'static_text'
-                ? this.props.data.value
-                : null
-            }
-            onChange={
-              this.props.data.field_type === 'static_text'
-                ? (_id, value) => this.onChange({ value })
-                : () => {}
-            }
-          />
-        </div>
-      </Subblock>
-    );
-  }
-}
+  const fieldId = data?.id || id || sortableId;
 
-export default compose(injectDNDSubblocks)(EditBlock);
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={cx('single-block subblock-draggable', {
+        isDragging,
+      })}
+      onClick={onSelect}
+      onFocus={onSelect}
+      onKeyDown={onSelect}
+    >
+      <div
+        className="dragsubblock"
+        {...attributes}
+        {...listeners}
+        style={{ cursor: 'grab' }}
+      >
+        <Icon className="drag handle" name={dragSVG} size="18px" />
+      </div>
+
+      {selected && !isDragging && (
+        <Button
+          type="button"
+          icon
+          basic
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete && onDelete(index);
+          }}
+          className="delete-button"
+          aria-label="delete"
+        >
+          <Icon name={trashSVG} size="18px" />
+        </Button>
+      )}
+
+      <div>
+        <Field
+          {...data}
+          name={getFieldName(data?.label, fieldId)}
+          key={index}
+          isOnEdit={true}
+          id={fieldId}
+          field_id={fieldId}
+          index={index}
+          value={data?.field_type === 'static_text' ? data?.value : null}
+          onChange={
+            data?.field_type === 'static_text'
+              ? (_id, value) => onChange && onChange(index, { ...data, value })
+              : () => {}
+          }
+        />
+      </div>
+    </div>
+  );
+};
+
+export default EditBlock;

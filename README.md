@@ -6,7 +6,7 @@ Intended to be used with [collective.volto.formsupport](https://github.com/colle
 Install with mrs-developer (see [Volto docs](https://docs.voltocms.com/customizing/add-ons/)) or with:
 
 ```bash
-yarn add volto-form-block volto-subblocks
+yarn add volto-form-block
 ```
 
 > [!NOTE]
@@ -15,6 +15,7 @@ yarn add volto-form-block volto-subblocks
 > - Since version v3.0.0 of this add-on, Volto 16.0.0-alpha.38 or later is required.
 > - Since version v3.11.0 of this add-on, [`collective.volto.formsupport`](https://github.com/collective/collective.volto.formsupport) 3.1.4 or later is required.
 > - Since version v3.13.0 of this add-on, [`collective.volto.formsupport`](https://github.com/collective/collective.volto.formsupport) 3.3.0 or later is required.
+> - Since version v3.19.0 of this add-on, modernized with `@dnd-kit` (fully compatible with Volto 19) and dropped deprecated `react-dnd`/`volto-subblocks` dependencies.
 
 ## Features
 

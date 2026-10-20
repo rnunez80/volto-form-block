@@ -1,10 +1,20 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import PropTypes from 'prop-types';
 import { Segment, Grid, Form, Button, TabPane, Tab } from 'semantic-ui-react';
 import {
-  withDNDContext,
-  SubblocksEdit,
-  SubblocksWrapper,
-} from 'volto-subblocks';
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  arrayMove,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { defineMessages, useIntl } from 'react-intl';
+import config from '@plone/volto/registry';
 import SidebarPortal from '@plone/volto/components/manage/Sidebar/SidebarPortal';
 
 import EditBlock from 'volto-form-block/components/EditBlock';
@@ -12,13 +22,12 @@ import Sidebar from 'volto-form-block/components/Sidebar';
 import DataTable from 'volto-form-block/components/DataTable';
 import ValidateConfigForm from 'volto-form-block/components/ValidateConfigForm';
 
-import { defineMessages } from 'react-intl';
-import config from '@plone/volto/registry';
+import './volto-subblocks.css';
 
 const messages = defineMessages({
   addField: {
     id: 'Add field',
-    defaultMessage: 'Aggiungi un campo',
+    defaultMessage: 'Add field',
   },
   default_submit_label: {
     id: 'form_default_submit_label',
@@ -52,155 +61,280 @@ const messages = defineMessages({
   },
 });
 
-/**
- * Edit Form block class.
- * @class Edit
- * @extends Component
- */
-class Edit extends SubblocksEdit {
-  componentDidMount() {
-    super.componentDidMount();
+export const Edit = (props) => {
+  const {
+    data = {},
+    block,
+    selected = false,
+    onChangeBlock,
+    openObjectBrowser,
+    properties,
+    metadata,
+  } = props;
 
-    if (!this.props.data.default_from) {
-      this.props.onChangeBlock(this.props.block, {
-        ...this.props.data,
+  const intl = useIntl();
+  const [subIndexSelected, setSubIndexSelected] = useState(0);
+
+  // Normalize subblocks ensuring every subblock has an id
+  const subblocks = useMemo(() => {
+    if (!data.subblocks || data.subblocks.length === 0) {
+      return [];
+    }
+    return data.subblocks.map((s, idx) => ({
+      ...s,
+      id: s.id ? String(s.id) : `field-${idx}-${Date.now()}`,
+    }));
+  }, [data.subblocks]);
+
+  // Set default_from if missing
+  useEffect(() => {
+    if (!data.default_from) {
+      onChangeBlock(block, {
+        ...data,
         default_from: 'noreply@plone.org',
-        lastChange: new Date().getTime(),
+        lastChange: Date.now(),
       });
     }
+  }, [data, block, onChangeBlock]);
+
+  // If there are no subblocks on mount, create an initial one
+  useEffect(() => {
+    if (!data.subblocks || data.subblocks.length === 0) {
+      const initialId = Date.now().toString();
+      onChangeBlock(block, {
+        ...data,
+        subblocks: [{ id: initialId, field_type: 'text' }],
+        lastChange: Date.now(),
+      });
+      setSubIndexSelected(0);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 5,
+      },
+    }),
+  );
+
+  const handleDragEnd = useCallback(
+    (event) => {
+      const { active, over } = event;
+      if (over && active.id !== over.id) {
+        const oldIndex = subblocks.findIndex(
+          (item) => String(item.id) === String(active.id),
+        );
+        const newIndex = subblocks.findIndex(
+          (item) => String(item.id) === String(over.id),
+        );
+        if (oldIndex !== -1 && newIndex !== -1) {
+          const newSubblocks = arrayMove(subblocks, oldIndex, newIndex);
+          onChangeBlock(block, {
+            ...data,
+            subblocks: newSubblocks,
+            lastChange: Date.now(),
+          });
+          setSubIndexSelected(newIndex);
+        }
+      }
+    },
+    [subblocks, block, data, onChangeBlock],
+  );
+
+  const onChangeSubblock = useCallback(
+    (index, updatedSubblock) => {
+      const newSubblocks = [...subblocks];
+      newSubblocks[index] = updatedSubblock;
+      onChangeBlock(block, {
+        ...data,
+        subblocks: newSubblocks,
+        lastChange: Date.now(),
+      });
+    },
+    [subblocks, block, data, onChangeBlock],
+  );
+
+  const deleteSubblock = useCallback(
+    (index) => {
+      const newSubblocks = [
+        ...subblocks.slice(0, index),
+        ...subblocks.slice(index + 1),
+      ];
+      setSubIndexSelected((prev) =>
+        prev === index ? null : prev > index ? prev - 1 : prev,
+      );
+      onChangeBlock(block, {
+        ...data,
+        subblocks: newSubblocks,
+        lastChange: Date.now(),
+      });
+    },
+    [subblocks, block, data, onChangeBlock],
+  );
+
+  const addSubblock = useCallback(() => {
+    const id = Date.now().toString();
+    const newBlock = { id, field_type: 'text' };
+    const newSubblocks = [...subblocks, newBlock];
+    onChangeBlock(block, {
+      ...data,
+      subblocks: newSubblocks,
+      lastChange: Date.now(),
+    });
+    setSubIndexSelected(newSubblocks.length - 1);
+  }, [subblocks, block, data, onChangeBlock]);
+
+  if (__SERVER__) {
+    return <div />;
   }
 
-  /**
-   * Render method.
-   * @method render
-   * @returns {string} Markup for the component.
-   */
+  const datatableEnabled =
+    config.blocks.blocksConfig.form?.enableDatatableView;
 
-  render() {
-    if (__SERVER__) {
-      return <div />;
-    }
+  const sortableIds = subblocks.map((s) => String(s.id));
 
-    const datatableEnabled =
-      config.blocks.blocksConfig.form.enableDatatableView;
+  return (
+    <div className="public-ui">
+      <ValidateConfigForm
+        data={data}
+        onEdit={true}
+        onChangeBlock={(updatedData) => {
+          onChangeBlock(block, updatedData);
+        }}
+      >
+        <Segment>
+          {data.title && <h2>{data.title}</h2>}
+          {data.description && (
+            <p className="description">{data.description}</p>
+          )}
 
-    return (
-      <div className="public-ui">
-        <ValidateConfigForm
-          data={this.props.data}
-          onEdit={true}
-          onChangeBlock={(data) => {
-            this.props.onChangeBlock(this.props.block, data);
-          }}
-        >
-          <Segment>
-            {this.props.data.title && <h2>{this.props.data.title}</h2>}
-            {this.props.data.description && (
-              <p className="description">{this.props.data.description}</p>
-            )}
+          <div className="volto-subblocks-wrapper">
+            <Tab
+              panes={[
+                {
+                  menuItem: intl.formatMessage(messages.form),
+                  render: () => (
+                    <TabPane>
+                      <DndContext
+                        sensors={sensors}
+                        collisionDetection={closestCenter}
+                        onDragEnd={handleDragEnd}
+                      >
+                        <SortableContext
+                          items={sortableIds}
+                          strategy={verticalListSortingStrategy}
+                        >
+                          {subblocks.map((subblock, index) => (
+                            <Form.Field key={subblock.id || index}>
+                              <EditBlock
+                                id={subblock.id}
+                                index={index}
+                                data={subblock}
+                                selected={selected && subIndexSelected === index}
+                                onSelect={() => setSubIndexSelected(index)}
+                                onChange={onChangeSubblock}
+                                onDelete={deleteSubblock}
+                                openObjectBrowser={openObjectBrowser}
+                              />
+                            </Form.Field>
+                          ))}
+                        </SortableContext>
+                      </DndContext>
 
-            <SubblocksWrapper node={this.node}>
-              <Tab
-                panes={[
-                  {
-                    menuItem: this.props.intl.formatMessage(messages.form),
-                    render: () => (
-                      <TabPane>
-                        {this.state.subblocks.map((subblock, subindex) => (
-                          <Form.Field key={subindex}>
-                            <EditBlock
-                              data={subblock}
-                              index={subindex}
-                              selected={this.isSubblockSelected(subindex)}
-                              {...this.subblockProps}
-                              openObjectBrowser={this.props.openObjectBrowser}
-                            />
-                          </Form.Field>
-                        ))}
-                        {this.props.selected && (
-                          <Form.Field>
-                            {this.renderAddBlockButton(
-                              this.props.intl.formatMessage(messages.addField),
-                            )}
-                          </Form.Field>
-                        )}
-                        <Grid columns={1} padded="vertically">
-                          <Grid.Row>
-                            <Grid.Column textAlign="center">
-                              {this.props.data?.show_cancel && (
-                                <Button secondary>
-                                  {this.props.data.cancel_label ||
-                                    this.props.intl.formatMessage(
-                                      messages.default_cancel_label,
-                                    )}
-                                </Button>
-                              )}
-                              <Button primary>
-                                {this.props.data.submit_label ||
-                                  this.props.intl.formatMessage(
-                                    messages.default_submit_label,
+                      {selected && (
+                        <Form.Field>
+                          <Button
+                            type="button"
+                            onClick={addSubblock}
+                            className="add-element"
+                          >
+                            {intl.formatMessage(messages.addField)}
+                          </Button>
+                        </Form.Field>
+                      )}
+
+                      <Grid columns={1} padded="vertically">
+                        <Grid.Row>
+                          <Grid.Column textAlign="center">
+                            {data?.show_cancel && (
+                              <Button secondary>
+                                {data.cancel_label ||
+                                  intl.formatMessage(
+                                    messages.default_cancel_label,
                                   )}
                               </Button>
-                            </Grid.Column>
-                          </Grid.Row>
-                        </Grid>
-                      </TabPane>
-                    ),
-                  },
-                  ...(datatableEnabled
-                    ? [
-                        {
-                          menuItem: this.props.intl.formatMessage(
-                            messages.data,
-                          ),
-                          render: () => (
-                            <TabPane className="container">
-                              {this.props.data.store ? (
-                                <DataTable
-                                  properties={this.props.properties}
-                                  blockId={this.props.block}
-                                  removeDataAfterDays={
-                                    this.props.data.remove_data_after_days
-                                  }
-                                />
-                              ) : (
-                                <p>
-                                  {this.props.intl.formatMessage(
-                                    messages.warning_enable_save,
-                                  )}
-                                </p>
-                              )}
-                            </TabPane>
-                          ),
-                        },
-                      ]
-                    : []),
-                ]}
-              />
-            </SubblocksWrapper>
-          </Segment>
-        </ValidateConfigForm>
+                            )}
+                            <Button primary>
+                              {data.submit_label ||
+                                intl.formatMessage(
+                                  messages.default_submit_label,
+                                )}
+                            </Button>
+                          </Grid.Column>
+                        </Grid.Row>
+                      </Grid>
+                    </TabPane>
+                  ),
+                },
+                ...(datatableEnabled
+                  ? [
+                      {
+                        menuItem: intl.formatMessage(messages.data),
+                        render: () => (
+                          <TabPane className="container">
+                            {data.store ? (
+                              <DataTable
+                                properties={properties}
+                                blockId={block}
+                                removeDataAfterDays={
+                                  data.remove_data_after_days
+                                }
+                              />
+                            ) : (
+                              <p>
+                                {intl.formatMessage(
+                                  messages.warning_enable_save,
+                                )}
+                              </p>
+                            )}
+                          </TabPane>
+                        ),
+                      },
+                    ]
+                  : []),
+              ]}
+            />
+          </div>
+        </Segment>
+      </ValidateConfigForm>
 
-        <SidebarPortal selected={this.props.selected || false}>
-          <Sidebar
-            {...this.props}
-            data={this.props.data}
-            block={this.props.block}
-            onChangeBlock={this.props.onChangeBlock}
-            onChangeSubBlock={this.onChangeSubblocks}
-            selected={this.state.subIndexSelected}
-            setSelected={this.onSubblockChangeFocus}
-            openObjectBrowser={this.props.openObjectBrowser}
-            properties={
-              this.props.metadata?.['@id']
-                ? this.props.metadata
-                : this.props.properties
-            }
-          />
-        </SidebarPortal>
-      </div>
-    );
-  }
-}
+      <SidebarPortal selected={selected}>
+        <Sidebar
+          {...props}
+          data={data}
+          block={block}
+          onChangeBlock={onChangeBlock}
+          onChangeSubBlock={onChangeSubblock}
+          selected={subIndexSelected}
+          setSelected={setSubIndexSelected}
+          openObjectBrowser={openObjectBrowser}
+          properties={metadata?.['@id'] ? metadata : properties}
+        />
+      </SidebarPortal>
+    </div>
+  );
+};
 
-export default React.memo(withDNDContext(Edit));
+Edit.propTypes = {
+  data: PropTypes.objectOf(PropTypes.any),
+  block: PropTypes.string,
+  selected: PropTypes.bool,
+  onChangeBlock: PropTypes.func,
+  openObjectBrowser: PropTypes.func,
+  properties: PropTypes.objectOf(PropTypes.any),
+  metadata: PropTypes.objectOf(PropTypes.any),
+};
+
+export default React.memo(Edit);

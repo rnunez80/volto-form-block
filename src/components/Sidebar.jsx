@@ -134,6 +134,14 @@ const Sidebar = ({
                 });
                 return;
               }
+              if (id === 'stream_data') {
+                onChangeBlock(block, {
+                  ...data,
+                  stream_data: value,
+                  streamData: value,
+                });
+                return;
+              }
               onChangeBlock(block, {
                 ...data,
                 [id]: value,
@@ -143,6 +151,7 @@ const Sidebar = ({
               ...data,
               send: data.send ?? data.sendEmail,
               store: data.store ?? data.storeData,
+              stream_data: data.stream_data ?? data.streamData,
               form_title: data.form_title ?? data.title,
               form_description: data.form_description ?? data.description,
             }}

@@ -108,11 +108,17 @@ const Schema = (data = {}) => {
 
   const isEmailEnabled = Boolean(data?.send ?? data?.sendEmail);
   const isStoreEnabled = Boolean(data?.store ?? data?.storeData);
+  const isStreamEnabled = Boolean(
+    data?.stream_data ?? data?.streamData ?? data?.stream,
+  );
 
   let conditional_required = [];
-  if (!isStoreEnabled && !isEmailEnabled) {
+  if (!isStoreEnabled && !isEmailEnabled && !isStreamEnabled) {
     conditional_required.push('store');
     conditional_required.push('send');
+    if (data?.stream_data !== undefined) {
+      conditional_required.push('stream_data');
+    }
   }
 
   const requiredFields = [
@@ -235,7 +241,6 @@ const Schema = (data = {}) => {
       send: {
         type: 'boolean',
         title: intl.formatMessage(messages.send),
-        description: intl.formatMessage(messages.attachmentSendEmail),
       },
       send_message: {
         title: intl.formatMessage(messages.send_message),

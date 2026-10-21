@@ -1,3 +1,10 @@
+## [3.21.0](https://github.com/collective/volto-form-block/compare/v3.20.0...v3.21.0) (2026-10-21)
+
+### Features
+
+* **ux:** make block canvas editing of field labels truly WYSIWYG to view mode using an auto-resizing multi-line textarea with matching typography, natural text wrapping, right-alignment, and clean hover/focus affordance
+* **layout:** add `ui form` container classes to `volto-subblocks-wrapper` in edit mode for identical Semantic UI form layout and theme styling inheritance
+
 ## [3.20.0](https://github.com/collective/volto-form-block/compare/v3.18.1...v3.20.0) (2026-10-20)
 
 ### Features

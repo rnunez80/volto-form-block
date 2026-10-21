@@ -29,6 +29,64 @@ const messages = defineMessages({
   },
 });
 
+const InlineLabelEditor = ({
+  fieldId,
+  label,
+  placeholder,
+  onFocus,
+  onLabelChange,
+}) => {
+  const textareaRef = React.useRef(null);
+
+  const adjustHeight = React.useCallback(() => {
+    const el = textareaRef.current;
+    if (el) {
+      el.style.height = 'auto';
+      el.style.height = `${el.scrollHeight}px`;
+    }
+  }, []);
+
+  React.useEffect(() => {
+    adjustHeight();
+    window.addEventListener('resize', adjustHeight);
+    return () => window.removeEventListener('resize', adjustHeight);
+  }, [label, adjustHeight]);
+
+  return (
+    <span className="subblock-inline-label-wrapper">
+      <textarea
+        ref={textareaRef}
+        key={`inline-label-input-${fieldId}`}
+        className="subblock-inline-label-input"
+        value={label || ''}
+        placeholder={placeholder}
+        title={placeholder}
+        rows={1}
+        onClick={(e) => {
+          e.stopPropagation();
+          onFocus && onFocus();
+        }}
+        onFocus={(e) => {
+          e.stopPropagation();
+          onFocus && onFocus();
+        }}
+        onChange={(e) => {
+          e.stopPropagation();
+          onLabelChange(e.target.value);
+          adjustHeight();
+        }}
+        onKeyDown={(e) => {
+          e.stopPropagation();
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            e.target.blur();
+          }
+        }}
+      />
+    </span>
+  );
+};
+
 /**
  * Field class.
  * @class View
@@ -68,32 +126,13 @@ const Field = ({
   const renderTitle = () => {
     if (isOnEdit && onLabelChange) {
       return (
-        <span className="subblock-inline-label-wrapper">
-          <input
-            key={`inline-label-input-${field_id || id || name}`}
-            type="text"
-            className="subblock-inline-label-input"
-            value={label || ''}
-            placeholder={intl.formatMessage(messages.field_label)}
-            title={intl.formatMessage(messages.field_label)}
-            onClick={(e) => {
-              e.stopPropagation();
-              onFocus && onFocus();
-            }}
-            onFocus={(e) => {
-              e.stopPropagation();
-              onFocus && onFocus();
-            }}
-            onChange={(e) => {
-              e.stopPropagation();
-              onLabelChange(e.target.value);
-            }}
-            onKeyDown={(e) => {
-              e.stopPropagation();
-            }}
-          />
-          {required && <span className="subblock-required-star">*</span>}
-        </span>
+        <InlineLabelEditor
+          fieldId={field_id || id || name}
+          label={label}
+          placeholder={intl.formatMessage(messages.field_label)}
+          onFocus={onFocus}
+          onLabelChange={onLabelChange}
+        />
       );
     }
     return label;

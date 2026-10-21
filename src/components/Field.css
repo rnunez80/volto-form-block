@@ -18,57 +18,80 @@
 
 .block.form .ui.form .field .wrapper > label {
     margin-bottom: 0;
+    text-align: right;
 }
 
 .block.form .ui.form .field .static-text {
     margin: 2rem 0;
 }
 
-.subblock-inline-label-wrapper {
-    display: inline-flex;
-    align-items: center;
+.block.form .subblock-inline-label-wrapper {
+    display: block;
     width: 100%;
     position: relative;
+    text-align: right;
 }
 
-.subblock-inline-label-input {
-    font-family: inherit;
-    font-size: 1rem !important;
-    font-weight: 600 !important;
-    color: #1a1a1a !important;
-    background: transparent !important;
-    border: 1px dashed transparent !important;
-    border-radius: 4px !important;
-    padding: 4px 6px !important;
+.block.form textarea.subblock-inline-label-input,
+textarea.subblock-inline-label-input {
+    display: block;
     width: 100% !important;
+    font-family: inherit !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    line-height: 1.4 !important;
+    color: #000000 !important;
+    text-align: right !important;
+    background: transparent !important;
+    border: none !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
     outline: none !important;
-    transition: all 0.2s ease-in-out !important;
-    box-sizing: border-box !important;
     cursor: text !important;
+    resize: none !important;
+    overflow: hidden !important;
+    vertical-align: top !important;
+    transition: border-color 0.2s ease, background-color 0.2s ease !important;
 }
 
-.subblock-inline-label-input:hover {
-    background: rgba(0, 126, 177, 0.05) !important;
+.block.form textarea.subblock-inline-label-input:hover,
+textarea.subblock-inline-label-input:hover {
+    border-bottom: 1.5px dashed #007eb1 !important;
     border-color: #007eb1 !important;
+    background: rgba(0, 126, 177, 0.04) !important;
 }
 
-.subblock-inline-label-input:focus {
-    background: #ffffff !important;
+.block.form textarea.subblock-inline-label-input:focus,
+textarea.subblock-inline-label-input:focus {
+    border-bottom: 2px solid #007eb1 !important;
     border-color: #007eb1 !important;
-    border-style: solid !important;
-    box-shadow: 0 0 0 2px rgba(0, 126, 177, 0.2) !important;
+    background: rgba(0, 126, 177, 0.06) !important;
 }
 
-.subblock-inline-label-input::placeholder {
-    color: #595959 !important;
+.block.form textarea.subblock-inline-label-input::placeholder,
+textarea.subblock-inline-label-input::placeholder {
+    color: #747474 !important;
     font-style: italic !important;
     font-weight: 400 !important;
 }
 
-.subblock-required-star {
-    color: #e40166;
-    font-size: 1.1rem;
-    font-weight: bold;
-    margin-left: 4px;
+/* For Checkbox and Radio where labels are inline next to controls on the left */
+.block.form .ui.checkbox label .subblock-inline-label-wrapper,
+.block.form .ui.radio label .subblock-inline-label-wrapper {
+    display: inline-block;
+    width: auto;
+    min-width: 60px;
+    text-align: left;
+}
+
+.block.form .ui.checkbox label textarea.subblock-inline-label-input,
+.block.form .ui.radio label textarea.subblock-inline-label-input {
+    display: inline-block;
+    width: auto;
+    min-width: 60px;
+    text-align: left !important;
 }
 

@@ -214,7 +214,7 @@ export const Edit = (props) => {
             </p>
           )}
 
-          <div className="volto-subblocks-wrapper">
+          <div className="volto-subblocks-wrapper ui form">
             <Tab
               panes={[
                 {

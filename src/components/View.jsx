@@ -3,7 +3,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { useIntl, defineMessages } from 'react-intl';
 import { submitForm, resetOTP } from 'volto-form-block/actions';
-import { getFieldName } from 'volto-form-block/components/utils';
+import {
+  getFieldName,
+  getFieldParamValue,
+  getSearchString,
+} from 'volto-form-block/components/utils';
+import { useLocation } from 'react-router-dom';
 import FormView from 'volto-form-block/components/FormView';
 import config from '@plone/volto/registry';
 import { Captcha } from 'volto-form-block/components/Widget';
@@ -66,30 +71,58 @@ const formStateReducer = (state, action) => {
   }
 };
 
-const getInitialData = (data) => {
+const getInitialData = (data, location) => {
   const { static_fields = [], subblocks = [] } = data;
+  const search = getSearchString(location);
+  const searchParams = search ? new URLSearchParams(search) : null;
+
+  const initialSubblocks = subblocks.reduce((acc, field) => {
+    const name = getFieldName(field.label, field.id);
+    const paramValue = getFieldParamValue(field, searchParams);
+
+    if (field.field_type === 'hidden') {
+      return {
+        ...acc,
+        [name]: {
+          ...field,
+          ...(data[field.id] && { custom_field_id: data[field.id] }),
+          ...(paramValue !== null ? { value: paramValue } : {}),
+        },
+      };
+    }
+
+    if (
+      paramValue !== null &&
+      field.field_type !== 'static_text' &&
+      field.field_type !== 'attachment'
+    ) {
+      return {
+        ...acc,
+        [name]: {
+          field_id: field.field_id || field.id,
+          label: field.label,
+          value:
+            field.field_type === 'checkbox'
+              ? paramValue === 'true' || paramValue === '1'
+              : paramValue,
+        },
+      };
+    }
+
+    return acc;
+  }, {});
+
+  const initialStaticFields = static_fields.reduce(
+    (acc, field) => ({
+      ...acc,
+      [getFieldName(field.label, field.id)]: field,
+    }),
+    {},
+  );
 
   return {
-    ...subblocks.reduce(
-      (acc, field) =>
-        field.field_type === 'hidden'
-          ? {
-              ...acc,
-              [getFieldName(field.label, field.id)]: {
-                ...field,
-                ...(data[field.id] && { custom_field_id: data[field.id] }),
-              },
-            }
-          : acc,
-      {},
-    ),
-    ...static_fields.reduce(
-      (acc, field) => ({
-        ...acc,
-        [getFieldName(field.label, field.id)]: field,
-      }),
-      {},
-    ),
+    ...initialSubblocks,
+    ...initialStaticFields,
   };
 };
 
@@ -97,23 +130,28 @@ const getInitialData = (data) => {
  * Form view
  * @class View
  */
-const View = ({ data, id, path }) => {
+const View = ({ data, id, path, location: locationProp }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
+  const routerLocation = useLocation();
+  const location = locationProp || routerLocation;
 
-  const [formData, setFormData] = useReducer((state, action) => {
-    if (action.reset) {
-      if (data.email_otp_verification) {
-        dispatch(resetOTP(id));
+  const [formData, setFormData] = useReducer(
+    (state, action) => {
+      if (action.reset) {
+        if (data.email_otp_verification) {
+          dispatch(resetOTP(id));
+        }
+        return getInitialData(data, location);
       }
-      return getInitialData(data);
-    }
 
-    return {
-      ...state,
-      [action.field]: action.value,
-    };
-  }, getInitialData(data));
+      return {
+        ...state,
+        [action.field]: action.value,
+      };
+    },
+    getInitialData(data, location),
+  );
 
   const [formState, setFormState] = useReducer(formStateReducer, initialState);
   const [formErrors, setFormErrors] = useState([]);
@@ -231,7 +269,8 @@ const View = ({ data, id, path }) => {
           data.subblocks.forEach((subblock) => {
             const name = getFieldName(subblock.label, subblock.id);
             if (formattedFormData[name]?.value) {
-              formattedFormData[name].field_id = subblock.field_id;
+              formattedFormData[name].field_id =
+                subblock.field_id || subblock.id;
               const isAttachment =
                 config.blocks.blocksConfig.form.attachment_fields.includes(
                   subblock.field_type,
@@ -242,7 +281,7 @@ const View = ({ data, id, path }) => {
                 attachments[name] = {
                   ...formattedFormData[name].value,
                   label: formattedFormData[name].label,
-                  field_id: subblock.field_id,
+                  field_id: subblock.field_id || subblock.id,
                 };
                 delete formattedFormData[name];
               }
@@ -325,7 +364,8 @@ const View = ({ data, id, path }) => {
 
   useEffect(() => {
     resetFormState();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location?.search]);
 
   return (
     <ValidateConfigForm data={data}>
@@ -355,6 +395,9 @@ const View = ({ data, id, path }) => {
  */
 View.propTypes = {
   data: PropTypes.objectOf(PropTypes.any).isRequired,
+  id: PropTypes.string,
+  path: PropTypes.string,
+  location: PropTypes.objectOf(PropTypes.any),
 };
 
 export default View;

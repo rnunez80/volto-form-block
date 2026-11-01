@@ -10,7 +10,12 @@ import {
   Field,
 } from 'volto-form-block/components';
 
-import { downloadFile, getFieldName } from 'volto-form-block/components/utils';
+import {
+  downloadFile,
+  getFieldName,
+  getFieldParamValue,
+  getSearchString,
+} from 'volto-form-block/components/utils';
 import {
   submitForm,
   getFormData,
@@ -122,4 +127,6 @@ export {
   Field,
   downloadFile,
   getFieldName,
+  getFieldParamValue,
+  getSearchString,
 };

@@ -1,3 +1,9 @@
+## [3.22.0](https://github.com/collective/volto-form-block/compare/v3.21.0...v3.22.0) (2026-10-26)
+
+### Features
+
+* **prepopulate:** support populating form fields from GET request parameters matching the field ID, field name, or label (e.g., `?emplid_1793031587400=12345678`)
+
 ## [3.21.0](https://github.com/collective/volto-form-block/compare/v3.20.0...v3.21.0) (2026-10-21)
 
 ### Features

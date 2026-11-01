@@ -15,6 +15,7 @@ import { Captcha } from 'volto-form-block/components/Widget';
 import { isValidEmail } from 'volto-form-block/helpers/validators';
 import ValidateConfigForm from 'volto-form-block/components/ValidateConfigForm';
 import { OTP_FIELDNAME_EXTENDER } from 'volto-form-block/components/Widget';
+import { evaluateAllConditions } from 'volto-form-block/helpers/conditions-list';
 
 const messages = defineMessages({
   formSubmitted: {
@@ -165,6 +166,10 @@ const View = ({ data, id, path, location: locationProp }) => {
     setFormData({ field, value: { field_id, value, ...extras } });
   };
 
+  const isConditionalFieldVisible = (subblock) =>
+    !config.blocks.blocksConfig.form.enableConditionalFields ||
+    evaluateAllConditions(subblock.visibility_conditions, formData);
+
   useEffect(() => {
     if (formErrors.length > 0) {
       isValidForm();
@@ -175,6 +180,12 @@ const View = ({ data, id, path, location: locationProp }) => {
   const isValidForm = () => {
     const v = [];
     data.subblocks.forEach((subblock, index) => {
+      if (!isConditionalFieldVisible(subblock)) {
+        // A hidden conditional field must not be validated at all,
+        // even if it's marked as required.
+        return;
+      }
+
       const name = getFieldName(subblock.label, subblock.id);
       const fieldType = subblock.field_type;
       const isBCC = subblock.use_as_bcc;
@@ -268,6 +279,12 @@ const View = ({ data, id, path, location: locationProp }) => {
           const formattedFormData = { ...formData };
           data.subblocks.forEach((subblock) => {
             const name = getFieldName(subblock.label, subblock.id);
+            if (!isConditionalFieldVisible(subblock)) {
+              // Never submit/export a value belonging to a currently
+              // hidden conditional field.
+              delete formattedFormData[name];
+              return;
+            }
             if (formattedFormData[name]?.value) {
               formattedFormData[name].field_id =
                 subblock.field_id || subblock.id;

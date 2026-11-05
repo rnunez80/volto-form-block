@@ -123,7 +123,12 @@ class TextWidget extends Component {
         typeof this.props.title === 'string'
           ? this.props.title.toLowerCase()
           : '';
-      if (lowerId.includes('phone') || lowerId.includes('tel') || lowerTitle.includes('phone') || lowerTitle.includes('tel')) {
+      if (
+        lowerId.includes('phone') ||
+        lowerId.includes('tel') ||
+        lowerTitle.includes('phone') ||
+        lowerTitle.includes('tel')
+      ) {
         autoComplete = 'tel';
       } else if (lowerId.includes('email') || lowerTitle.includes('email')) {
         autoComplete = 'email';

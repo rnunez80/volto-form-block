@@ -52,9 +52,7 @@ const CheckboxWidget = (props) => {
           }}
           aria-required={required ? 'true' : 'false'}
           label={
-            <label
-              htmlFor={props.noForInFieldLabel ? null : `field-${id}`}
-            >
+            <label htmlFor={props.noForInFieldLabel ? null : `field-${id}`}>
               {title}
             </label>
           }

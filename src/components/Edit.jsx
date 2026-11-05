@@ -190,8 +190,7 @@ export const Edit = (props) => {
     return <div />;
   }
 
-  const datatableEnabled =
-    config.blocks.blocksConfig.form?.enableDatatableView;
+  const datatableEnabled = config.blocks.blocksConfig.form?.enableDatatableView;
 
   const sortableIds = subblocks.map((s) => String(s.id));
 
@@ -236,7 +235,9 @@ export const Edit = (props) => {
                                 id={subblock.id}
                                 index={index}
                                 data={subblock}
-                                selected={selected && subIndexSelected === index}
+                                selected={
+                                  selected && subIndexSelected === index
+                                }
                                 onSelect={() => setSubIndexSelected(index)}
                                 onChange={onChangeSubblock}
                                 onDelete={deleteSubblock}
